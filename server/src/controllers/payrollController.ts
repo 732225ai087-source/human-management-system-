@@ -27,7 +27,7 @@ export class PayrollController {
 
   async getSalaryStructure(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const userId = req.params.userId || req.user!.userId;
+      const userId = (req.params.userId as string) || req.user!.userId;
       const structure = await payrollService.getSalaryStructure(userId);
       res.json({ success: true, data: structure } as ApiResponse);
     } catch (error) { next(error); }
@@ -35,7 +35,7 @@ export class PayrollController {
 
   async updateSalaryStructure(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const structure = await payrollService.updateSalaryStructure(req.params.userId, req.body);
+      const structure = await payrollService.updateSalaryStructure(req.params.userId as string, req.body);
       res.json({ success: true, data: structure, message: 'Salary structure updated' } as ApiResponse);
     } catch (error) { next(error); }
   }
@@ -50,9 +50,10 @@ export class PayrollController {
 
   async downloadSlip(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const pdfBuffer = await payrollService.generateSalarySlipPdf(req.params.id, req.user!.userId, req.user!.role);
+      const id = req.params.id as string;
+      const pdfBuffer = await payrollService.generateSalarySlipPdf(id, req.user!.userId, req.user!.role);
       res.setHeader('Content-Type', 'application/pdf');
-      res.setHeader('Content-Disposition', `attachment; filename=salary-slip-${req.params.id}.pdf`);
+      res.setHeader('Content-Disposition', `attachment; filename=salary-slip-${id}.pdf`);
       res.send(pdfBuffer);
     } catch (error) { next(error); }
   }
