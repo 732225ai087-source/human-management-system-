@@ -10,6 +10,7 @@ import { PageLoader } from '../../components/common/LoadingSpinner';
 import { ErrorMessage } from '../../components/common/ErrorMessage';
 import { EmptyState } from '../../components/common/EmptyState';
 import type { ApiResponse, User } from '../../types/api';
+import { getEmployeeAvatar } from '../../utils/avatar';
 
 export const AdminDashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -27,7 +28,7 @@ export const AdminDashboard: React.FC = () => {
     queryKey: ['employees', search],
     queryFn: async () => {
       const res = await apiClient.get<ApiResponse>('/dashboard/employees', { params: { search, limit: 10 } });
-      return res.data.data as { items: (User & { profile?: { firstName: string; lastName: string; department?: string; designation?: string } })[]; total: number };
+      return res.data.data as { items: (User & { profile?: { firstName: string; lastName: string; department?: string; designation?: string; profilePicUrl?: string } })[]; total: number };
     },
   });
 
@@ -44,7 +45,7 @@ export const AdminDashboard: React.FC = () => {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-2xl font-bold text-surface-900">Admin Dashboard</h1>
+        <h1 className="text-2xl font-bold text-surface-900 font-serif">Admin Dashboard</h1>
         <p className="text-surface-500 mt-1">Overview of your organization</p>
       </div>
 
@@ -53,12 +54,12 @@ export const AdminDashboard: React.FC = () => {
         {statCards.map((stat) => (
           <Card key={stat.label} glass className="relative overflow-hidden">
             <div className="flex items-center gap-4">
-              <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center flex-shrink-0`}>
-                <stat.icon className="w-6 h-6 text-white" />
+              <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center flex-shrink-0 text-white shadow-md`}>
+                <stat.icon className="w-6 h-6" />
               </div>
               <div>
                 <p className="text-sm text-surface-500">{stat.label}</p>
-                <p className="text-2xl font-bold text-surface-900">{stat.value}</p>
+                <p className="text-2xl font-bold text-surface-900 mt-1">{stat.value}</p>
               </div>
             </div>
           </Card>
@@ -68,26 +69,26 @@ export const AdminDashboard: React.FC = () => {
       {/* Quick Links */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Button variant="outline" size="lg" className="justify-start" onClick={() => navigate('/admin/attendance')}>
-          <HiOutlineClock className="w-5 h-5" /> View Attendance Records
+          <HiOutlineClock className="w-5 h-5 text-primary-600" /> View Attendance Records
         </Button>
         <Button variant="outline" size="lg" className="justify-start" onClick={() => navigate('/admin/leave')}>
-          <HiOutlineCalendar className="w-5 h-5" /> Manage Leave Requests
+          <HiOutlineCalendar className="w-5 h-5 text-primary-600" /> Manage Leave Requests
         </Button>
         <Button variant="outline" size="lg" className="justify-start" onClick={() => navigate('/admin/payroll')}>
-          <HiOutlineCurrencyDollar className="w-5 h-5" /> Payroll Management
+          <HiOutlineCurrencyDollar className="w-5 h-5 text-primary-600" /> Payroll Management
         </Button>
       </div>
 
       {/* Employee List */}
       <Card>
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-lg font-semibold text-surface-900">Employees</h2>
+          <h2 className="text-lg font-semibold text-surface-900 font-serif">Employees</h2>
           <div className="w-64">
             <Input
               placeholder="Search employees..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              icon={<HiSearch className="w-4 h-4" />}
+              icon={<HiSearch className="w-4 h-4 text-surface-400" />}
             />
           </div>
         </div>
@@ -113,13 +114,15 @@ export const AdminDashboard: React.FC = () => {
                   <tr key={emp.id} className="border-b border-surface-50 hover:bg-surface-50 transition-colors">
                     <td className="py-3 px-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center">
-                          <span className="text-sm font-medium text-primary-700">
-                            {emp.profile?.firstName?.[0] || 'U'}
-                          </span>
+                        <div className="w-9 h-9 rounded-full overflow-hidden flex-shrink-0 ring-2 ring-primary-500/10">
+                          <img
+                            src={getEmployeeAvatar(emp.email, emp.profile?.profilePicUrl)}
+                            alt=""
+                            className="w-full h-full object-cover"
+                          />
                         </div>
                         <div>
-                          <p className="text-sm font-medium text-surface-900">
+                          <p className="text-sm font-medium text-surface-900 font-serif">
                             {emp.profile?.firstName} {emp.profile?.lastName}
                           </p>
                           <p className="text-xs text-surface-500">{emp.email}</p>

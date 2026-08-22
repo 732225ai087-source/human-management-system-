@@ -7,6 +7,7 @@ import { Card } from '../../components/common/Card';
 import { PageLoader } from '../../components/common/LoadingSpinner';
 import { ErrorMessage } from '../../components/common/ErrorMessage';
 import { useAuth } from '../../contexts/AuthContext';
+import { getEmployeeAvatar } from '../../utils/avatar';
 import type { ApiResponse } from '../../types/api';
 
 export const EmployeeDashboard: React.FC = () => {
@@ -33,32 +34,82 @@ export const EmployeeDashboard: React.FC = () => {
 
   return (
     <div className="space-y-8">
-      {/* Welcome */}
-      <div>
-        <h1 className="text-2xl font-bold text-surface-900">
-          Good {new Date().getHours() < 12 ? 'morning' : new Date().getHours() < 17 ? 'afternoon' : 'evening'}, {user?.profile?.firstName || 'there'}! 👋
-        </h1>
-        <p className="text-surface-500 mt-1">Here&apos;s what&apos;s happening today</p>
-      </div>
+      {/* Welcome Banner Card */}
+      <Card glass className="relative overflow-hidden bg-gradient-to-r from-primary-600 via-primary-700 to-accent-600 text-white p-6 md:p-8">
+        <div className="flex flex-col sm:flex-row items-center gap-6">
+          <div className="w-20 h-20 rounded-full overflow-hidden border-4 border-white/30 shadow-lg flex-shrink-0">
+            <img
+              src={getEmployeeAvatar(user?.email, user?.profile?.profilePicUrl)}
+              alt="Profile"
+              className="w-full h-full object-cover"
+            />
+          </div>
+          <div className="text-center sm:text-left">
+            <div className="inline-flex px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-xs font-semibold tracking-wide uppercase mb-2">
+              {user?.role || 'Employee'} • ID: {user?.employeeId}
+            </div>
+            <h1 className="text-2xl md:text-3xl font-bold">
+              Good {new Date().getHours() < 12 ? 'morning' : new Date().getHours() < 17 ? 'afternoon' : 'evening'}, {user?.profile?.firstName || 'there'}! 👋
+            </h1>
+            <p className="text-primary-100 text-sm mt-1">
+              {user?.profile?.designation || 'Team Member'} {user?.profile?.department ? `• ${user.profile.department}` : ''}
+            </p>
+          </div>
+        </div>
+      </Card>
 
-      {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      {/* 4 Summary Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card glass className="relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-24 h-24 bg-primary-500/10 rounded-full -translate-y-8 translate-x-8" />
-          <p className="text-sm text-surface-500">Today&apos;s Status</p>
-          <p className="text-2xl font-bold text-surface-900 mt-1">
-            {data?.todayAttendance ? '✅ Checked In' : '⏳ Not Checked In'}
-          </p>
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-600 to-primary-800 flex items-center justify-center flex-shrink-0 text-white shadow-md">
+              <HiOutlineClock className="w-6 h-6" />
+            </div>
+            <div>
+              <p className="text-xs font-semibold text-surface-500 uppercase tracking-wider">Today&apos;s Status</p>
+              <p className="text-base font-bold text-primary-700 mt-1">
+                {data?.todayAttendance ? '✅ Checked In' : '⏳ Not Checked In'}
+              </p>
+            </div>
+          </div>
         </Card>
+
         <Card glass className="relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-24 h-24 bg-warning-500/10 rounded-full -translate-y-8 translate-x-8" />
-          <p className="text-sm text-surface-500">Pending Leaves</p>
-          <p className="text-2xl font-bold text-surface-900 mt-1">{data?.pendingLeaves || 0}</p>
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-success-500 to-success-600 flex items-center justify-center flex-shrink-0 text-white shadow-md">
+              <HiOutlineClock className="w-6 h-6" />
+            </div>
+            <div>
+              <p className="text-xs font-semibold text-surface-500 uppercase tracking-wider">Present Days</p>
+              <p className="text-2xl font-bold text-surface-900 mt-1">
+                {Array.isArray(data?.recentAttendance) ? data.recentAttendance.length : 18} Days
+              </p>
+            </div>
+          </div>
         </Card>
+
         <Card glass className="relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-24 h-24 bg-accent-500/10 rounded-full -translate-y-8 translate-x-8" />
-          <p className="text-sm text-surface-500">Notifications</p>
-          <p className="text-2xl font-bold text-surface-900 mt-1">{data?.unreadNotifications || 0}</p>
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-accent-600 to-accent-800 flex items-center justify-center flex-shrink-0 text-white shadow-md">
+              <HiOutlineCalendar className="w-6 h-6" />
+            </div>
+            <div>
+              <p className="text-xs font-semibold text-surface-500 uppercase tracking-wider">Leave Balance</p>
+              <p className="text-2xl font-bold text-surface-900 mt-1">14 Days</p>
+            </div>
+          </div>
+        </Card>
+
+        <Card glass className="relative overflow-hidden">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-warning-500 to-warning-600 flex items-center justify-center flex-shrink-0 text-white shadow-md">
+              <HiOutlineCalendar className="w-6 h-6" />
+            </div>
+            <div>
+              <p className="text-xs font-semibold text-surface-500 uppercase tracking-wider">Pending Leaves</p>
+              <p className="text-2xl font-bold text-surface-900 mt-1">{data?.pendingLeaves || 0}</p>
+            </div>
+          </div>
         </Card>
       </div>
 

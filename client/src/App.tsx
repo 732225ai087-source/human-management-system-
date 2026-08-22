@@ -66,7 +66,7 @@ const App: React.FC = () => {
             {/* Protected routes */}
             <Route element={<AuthGuard><AppLayout /></AuthGuard>}>
               {/* Employee routes */}
-              <Route path="/dashboard" element={<EmployeeDashboard />} />
+              <Route path="/dashboard" element={<RoleGuard allowedRoles={['EMPLOYEE']}><EmployeeDashboard /></RoleGuard>} />
               <Route path="/profile" element={<ProfileView />} />
               <Route path="/profile/edit" element={<ProfileEdit />} />
               <Route path="/profile/:userId" element={<ProfileView />} />

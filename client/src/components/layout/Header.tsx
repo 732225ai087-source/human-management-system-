@@ -1,6 +1,7 @@
 import React from 'react';
 import { HiOutlineBell } from 'react-icons/hi';
 import { useAuth } from '../../contexts/AuthContext';
+import { getEmployeeAvatar } from '../../utils/avatar';
 
 export const Header: React.FC = () => {
   const { user } = useAuth();
@@ -27,10 +28,12 @@ export const Header: React.FC = () => {
           </button>
 
           {/* User avatar */}
-          <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary-400 to-accent-500 flex items-center justify-center">
-            <span className="text-sm font-semibold text-white">
-              {user?.profile?.firstName?.[0] || user?.email?.[0]?.toUpperCase() || 'U'}
-            </span>
+          <div className="w-9 h-9 rounded-full overflow-hidden ring-2 ring-primary-500/20">
+            <img
+              src={getEmployeeAvatar(user?.email, user?.profile?.profilePicUrl)}
+              alt="Avatar"
+              className="w-full h-full object-cover"
+            />
           </div>
         </div>
       </div>

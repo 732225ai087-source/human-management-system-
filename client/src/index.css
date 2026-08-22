@@ -1,54 +1,55 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --color-primary-50: #eff6ff;
-  --color-primary-100: #dbeafe;
-  --color-primary-200: #bfdbfe;
-  --color-primary-300: #93c5fd;
-  --color-primary-400: #60a5fa;
-  --color-primary-500: #3b82f6;
-  --color-primary-600: #2563eb;
-  --color-primary-700: #1d4ed8;
-  --color-primary-800: #1e40af;
-  --color-primary-900: #1e3a8a;
+  --color-primary-50: #FDF2F4;
+  --color-primary-100: #F9E1E5;
+  --color-primary-200: #F3C7CE;
+  --color-primary-300: #E69EA9;
+  --color-primary-400: #D26B7F;
+  --color-primary-500: #B53852;
+  --color-primary-600: #8B0029;
+  --color-primary-700: #6B1D2F;
+  --color-primary-800: #541524;
+  --color-primary-900: #4A0E1C;
   
-  --color-accent-50: #faf5ff;
-  --color-accent-100: #f3e8ff;
-  --color-accent-200: #e9d5ff;
-  --color-accent-300: #d8b4fe;
-  --color-accent-400: #c084fc;
-  --color-accent-500: #a855f7;
-  --color-accent-600: #9333ea;
-  --color-accent-700: #7e22ce;
-  --color-accent-800: #6b21a8;
-  --color-accent-900: #581c87;
+  --color-accent-50: #FAF0F2;
+  --color-accent-100: #F2D8DE;
+  --color-accent-200: #E4B5C1;
+  --color-accent-300: #CF889B;
+  --color-accent-400: #B65972;
+  --color-accent-500: #97334D;
+  --color-accent-600: #772138;
+  --color-accent-700: #5D182A;
+  --color-accent-800: #46101E;
+  --color-accent-900: #330A15;
 
   --color-success-50: #f0fdf4;
-  --color-success-500: #22c55e;
-  --color-success-600: #16a34a;
+  --color-success-500: #10b981;
+  --color-success-600: #059669;
   
-  --color-warning-50: #fefce8;
-  --color-warning-500: #eab308;
-  --color-warning-600: #ca8a04;
+  --color-warning-50: #fffbe6;
+  --color-warning-500: #f59e0b;
+  --color-warning-600: #d97706;
   
-  --color-danger-50: #fef2f2;
+  --color-danger-50: #fff5f5;
   --color-danger-500: #ef4444;
   --color-danger-600: #dc2626;
 
-  --color-surface-50: #f8fafc;
-  --color-surface-100: #f1f5f9;
-  --color-surface-200: #e2e8f0;
-  --color-surface-300: #cbd5e1;
-  --color-surface-400: #94a3b8;
-  --color-surface-500: #64748b;
-  --color-surface-600: #475569;
-  --color-surface-700: #334155;
-  --color-surface-800: #1e293b;
-  --color-surface-900: #0f172a;
-  --color-surface-950: #020617;
+  --color-surface-50: #ffffff;
+  --color-surface-100: #fcf9fa;
+  --color-surface-200: #f7f1f3;
+  --color-surface-300: #e8dce0;
+  --color-surface-400: #a39196;
+  --color-surface-500: #6e5c61;
+  --color-surface-600: #4f3e43;
+  --color-surface-700: #3b2c31;
+  --color-surface-800: #2b1b20;
+  --color-surface-900: #1f1014;
+  --color-surface-950: #120609;
 
-  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-serif: 'Playfair Display', Georgia, serif;
+  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
 }
 
 /* Base styles */
@@ -60,24 +61,31 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Headings with Cherry Cordial Serif elegance */
+h1, h2, h3, .font-serif {
+  font-family: var(--font-serif);
+  letter-spacing: -0.01em;
+}
+
 /* Glass morphism utility */
 .glass {
-  background: rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.93);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(139, 0, 41, 0.12);
+  box-shadow: 0 4px 20px -2px rgba(107, 29, 47, 0.06);
 }
 
 .glass-dark {
-  background: rgba(15, 23, 42, 0.7);
+  background: rgba(74, 14, 28, 0.93);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(139, 0, 41, 0.25);
 }
 
 /* Gradient text utility */
 .gradient-text {
-  background: linear-gradient(135deg, var(--color-primary-600), var(--color-accent-500));
+  background: linear-gradient(135deg, var(--color-primary-600), var(--color-primary-900));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
