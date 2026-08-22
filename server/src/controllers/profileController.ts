@@ -5,8 +5,7 @@ import type { ApiResponse } from '../types/index.js';
 export class ProfileController {
   async getProfile(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const userId = req.params.userId || req.user!.userId;
-      // Non-admin can only see their own profile
+      const userId = (req.params.userId as string) || req.user!.userId;
       if (req.user!.role !== 'ADMIN' && userId !== req.user!.userId) {
         res.status(403).json({ success: false, error: 'Not authorized' });
         return;
@@ -18,7 +17,7 @@ export class ProfileController {
 
   async updateProfile(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const userId = req.params.userId || req.user!.userId;
+      const userId = (req.params.userId as string) || req.user!.userId;
       if (req.user!.role !== 'ADMIN' && userId !== req.user!.userId) {
         res.status(403).json({ success: false, error: 'Not authorized' });
         return;
@@ -31,7 +30,7 @@ export class ProfileController {
   async uploadProfilePicture(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       if (!req.file) { res.status(400).json({ success: false, error: 'No file uploaded' }); return; }
-      const userId = req.params.userId || req.user!.userId;
+      const userId = (req.params.userId as string) || req.user!.userId;
       const fileUrl = `/uploads/profiles/${req.file.filename}`;
       const profile = await profileService.updateProfilePicture(userId, fileUrl);
       res.json({ success: true, data: profile, message: 'Profile picture updated' } as ApiResponse);
@@ -41,7 +40,7 @@ export class ProfileController {
   async uploadDocument(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       if (!req.file) { res.status(400).json({ success: false, error: 'No file uploaded' }); return; }
-      const userId = req.params.userId || req.user!.userId;
+      const userId = (req.params.userId as string) || req.user!.userId;
       const fileUrl = `/uploads/documents/${req.file.filename}`;
       const doc = await profileService.uploadDocument(userId, req.file.originalname, fileUrl, req.file.mimetype);
       res.status(201).json({ success: true, data: doc, message: 'Document uploaded' } as ApiResponse);
@@ -50,7 +49,7 @@ export class ProfileController {
 
   async deleteDocument(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      await profileService.deleteDocument(req.params.id, req.user!.userId, req.user!.role);
+      await profileService.deleteDocument(req.params.id as string, req.user!.userId, req.user!.role);
       res.json({ success: true, message: 'Document deleted' } as ApiResponse);
     } catch (error) { next(error); }
   }
@@ -58,10 +57,17 @@ export class ProfileController {
   async getAllProfiles(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const page = parseInt(req.query.page as string) || 1;
-      const limit = parseInt(req.query.limit as string) || 10;
+      const limit = parseInt(req.query.limit as string) || 50;
       const search = req.query.search as string;
       const result = await profileService.getAllProfiles(page, limit, search);
       res.json({ success: true, data: result } as ApiResponse);
+    } catch (error) { next(error); }
+  }
+
+  async deleteProfile(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      await profileService.deleteProfile(req.params.userId as string);
+      res.json({ success: true, message: 'Employee removed successfully' } as ApiResponse);
     } catch (error) { next(error); }
   }
 }

@@ -13,20 +13,45 @@ export class ProfileService {
 
   async updateProfile(userId: string, data: Record<string, unknown>, role: string) {
     const allowedEmployeeFields = ['phone', 'address'];
-    const allowedAdminFields = ['firstName', 'lastName', 'phone', 'address', 'dateOfBirth', 'department', 'designation', 'dateOfJoining'];
+    const allowedAdminFields = ['firstName', 'lastName', 'phone', 'address', 'dateOfBirth', 'department', 'designation', 'dateOfJoining', 'profilePicUrl'];
 
     const allowed = role === 'ADMIN' ? allowedAdminFields : allowedEmployeeFields;
     const filtered: Record<string, unknown> = {};
     for (const key of allowed) {
-      if (data[key] !== undefined) filtered[key] = data[key];
+      if (data[key] !== undefined) {
+        if ((key === 'dateOfBirth' || key === 'dateOfJoining') && typeof data[key] === 'string' && data[key]) {
+          filtered[key] = new Date(data[key] as string);
+        } else {
+          filtered[key] = data[key];
+        }
+      }
+    }
+
+    if (role === 'ADMIN') {
+      const userUpdates: Record<string, unknown> = {};
+      if (data.role) userUpdates.role = data.role;
+      if (data.employeeId) userUpdates.employeeId = data.employeeId;
+      if (data.email) userUpdates.email = data.email;
+      if (Object.keys(userUpdates).length > 0) {
+        await prisma.user.update({
+          where: { id: userId },
+          data: userUpdates,
+        });
+      }
     }
 
     const profile = await prisma.profile.update({
       where: { userId },
       data: filtered,
-      include: { documents: true },
+      include: { user: { select: { id: true, employeeId: true, email: true, role: true } }, documents: true },
     });
     return profile;
+  }
+
+  async deleteProfile(userId: string) {
+    const user = await prisma.user.findUnique({ where: { id: userId } });
+    if (!user) throw new AppError('Employee not found', 404);
+    return prisma.user.delete({ where: { id: userId } });
   }
 
   async updateProfilePicture(userId: string, fileUrl: string) {

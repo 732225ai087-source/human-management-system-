@@ -20,6 +20,7 @@ router.delete('/documents/:id', profileController.deleteDocument);
 router.get('/all', roleGuard('ADMIN'), profileController.getAllProfiles);
 router.get('/:userId', profileController.getProfile);
 router.put('/:userId', roleGuard('ADMIN'), profileController.updateProfile);
+router.delete('/:userId', roleGuard('ADMIN'), profileController.deleteProfile);
 router.post('/:userId/picture', roleGuard('ADMIN'), uploadMiddleware.profilePicture, profileController.uploadProfilePicture);
 router.post('/:userId/documents', roleGuard('ADMIN'), uploadMiddleware.document, profileController.uploadDocument);
 

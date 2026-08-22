@@ -8,6 +8,7 @@ import { Button } from '../../components/common/Button';
 import { PageLoader } from '../../components/common/LoadingSpinner';
 import { ErrorMessage } from '../../components/common/ErrorMessage';
 import { useAuth } from '../../contexts/AuthContext';
+import { getEmployeeAvatar } from '../../utils/avatar';
 import type { ApiResponse, Profile } from '../../types/api';
 
 export const ProfileView: React.FC = () => {
@@ -37,14 +38,12 @@ export const ProfileView: React.FC = () => {
       <Card className="relative overflow-hidden">
         <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-r from-primary-500 to-accent-500" />
         <div className="relative pt-16 flex flex-col sm:flex-row items-start sm:items-end gap-4">
-          <div className="w-24 h-24 rounded-2xl bg-white shadow-lg border-4 border-white flex items-center justify-center">
-            {profile.profilePicUrl ? (
-              <img src={profile.profilePicUrl} alt="Profile" className="w-full h-full rounded-xl object-cover" />
-            ) : (
-              <span className="text-3xl font-bold text-primary-600">
-                {profile.firstName?.[0]}{profile.lastName?.[0]}
-              </span>
-            )}
+          <div className="w-24 h-24 rounded-2xl bg-white shadow-lg border-4 border-white overflow-hidden flex items-center justify-center">
+            <img
+              src={getEmployeeAvatar(profile.user?.email, profile.profilePicUrl)}
+              alt="Profile"
+              className="w-full h-full object-cover"
+            />
           </div>
           <div className="flex-1">
             <h1 className="text-2xl font-bold text-surface-900">{profile.firstName} {profile.lastName}</h1>
