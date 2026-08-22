@@ -79,7 +79,7 @@ export class AuthController {
 
   async verifyEmail(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const { token } = req.params;
+      const token = req.params.token as string;
       const result = await authService.verifyEmail(token);
       const response: ApiResponse = {
         success: true,
