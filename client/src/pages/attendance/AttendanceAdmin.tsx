@@ -6,6 +6,7 @@ import { Input } from '../../components/common/Input';
 import { PageLoader } from '../../components/common/LoadingSpinner';
 import { ErrorMessage } from '../../components/common/ErrorMessage';
 import { EmptyState } from '../../components/common/EmptyState';
+import { getEmployeeAvatar } from '../../utils/avatar';
 import type { ApiResponse, Attendance, User } from '../../types/api';
 
 const statusStyles: Record<string, string> = {
@@ -59,9 +60,20 @@ export const AttendanceAdmin: React.FC = () => {
               <tbody>
                 {data.items.map((r) => (
                   <tr key={r.id} className="border-b border-surface-50 hover:bg-surface-50">
-                    <td className="py-3 px-4 text-sm font-medium">
-                      {r.user?.profile?.firstName} {r.user?.profile?.lastName}
-                      <span className="text-xs text-surface-400 ml-1">({r.user?.employeeId})</span>
+                    <td className="py-3 px-4">
+                      <div className="flex items-center gap-3">
+                        <img
+                          src={getEmployeeAvatar(r.user?.email, r.user?.profile?.profilePicUrl)}
+                          alt=""
+                          className="w-8 h-8 rounded-full object-cover ring-2 ring-primary-500/10 flex-shrink-0"
+                        />
+                        <div>
+                          <p className="text-sm font-medium text-surface-900">
+                            {r.user?.profile?.firstName} {r.user?.profile?.lastName}
+                          </p>
+                          <p className="text-xs text-surface-400">{r.user?.employeeId}</p>
+                        </div>
+                      </div>
                     </td>
                     <td className="py-3 px-4 text-sm">{new Date(r.date).toLocaleDateString()}</td>
                     <td className="py-3 px-4 text-sm">{r.checkIn ? new Date(r.checkIn).toLocaleTimeString() : '—'}</td>
