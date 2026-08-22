@@ -14,7 +14,7 @@ export class NotificationController {
 
   async markAsRead(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      await notificationService.markAsRead(req.params.id, req.user!.userId);
+      await notificationService.markAsRead(req.params.id as string, req.user!.userId);
       res.json({ success: true, message: 'Notification marked as read' } as ApiResponse);
     } catch (error) { next(error); }
   }
