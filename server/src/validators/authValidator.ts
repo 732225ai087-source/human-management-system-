@@ -10,7 +10,7 @@ export const signUpSchema = z.object({
     .regex(/[a-z]/, 'Password must contain a lowercase letter')
     .regex(/[0-9]/, 'Password must contain a number')
     .regex(/[^A-Za-z0-9]/, 'Password must contain a special character'),
-  role: z.enum(['EMPLOYEE', 'ADMIN']).default('EMPLOYEE'),
+  role: z.enum(['EMPLOYEE']).default('EMPLOYEE'),
   firstName: z.string().min(1, 'First name is required').max(50),
   lastName: z.string().min(1, 'Last name is required').max(50),
 });
