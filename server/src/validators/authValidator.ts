@@ -1,7 +1,6 @@
 import { z } from 'zod';
 
 export const signUpSchema = z.object({
-  employeeId: z.string().min(1, 'Employee ID is required').max(20),
   email: z.string().email('Invalid email address'),
   password: z
     .string()

@@ -124,7 +124,7 @@ export interface LoginCredentials {
 }
 
 export interface SignupData {
-  employeeId: string;
+  employeeId?: string;
   email: string;
   password: string;
   role: 'EMPLOYEE' | 'ADMIN';

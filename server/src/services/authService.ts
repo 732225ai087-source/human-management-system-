@@ -9,21 +9,26 @@ import type { Role } from '@prisma/client';
 
 export class AuthService {
   async signup(data: SignUpInput) {
-    // Check for existing user
-    const existingUser = await prisma.user.findFirst({
-      where: {
-        OR: [
-          { email: data.email },
-          { employeeId: data.employeeId },
-        ],
-      },
+    // Check for existing user by email
+    const existingUser = await prisma.user.findUnique({
+      where: { email: data.email },
     });
 
     if (existingUser) {
-      if (existingUser.email === data.email) {
-        throw new AppError('An account with this email already exists', 409);
-      }
-      throw new AppError('An account with this Employee ID already exists', 409);
+      throw new AppError('An account with this email already exists', 409);
+    }
+
+    // Generate unique employee ID based on current employee strength (user count + 1)
+    const count = await prisma.user.count();
+    let idNumber = count + 1;
+    let employeeId = `EMP-${String(idNumber).padStart(3, '0')}`;
+
+    // Ensure uniqueness in case of legacy or manually entered IDs
+    let exists = await prisma.user.findUnique({ where: { employeeId } });
+    while (exists) {
+      idNumber++;
+      employeeId = `EMP-${String(idNumber).padStart(3, '0')}`;
+      exists = await prisma.user.findUnique({ where: { employeeId } });
     }
 
     const hashedPassword = await hashPassword(data.password);
@@ -31,7 +36,7 @@ export class AuthService {
 
     const user = await prisma.user.create({
       data: {
-        employeeId: data.employeeId,
+        employeeId,
         email: data.email,
         password: hashedPassword,
         role: data.role as Role,

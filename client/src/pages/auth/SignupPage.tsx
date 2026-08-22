@@ -1,21 +1,18 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { HiOutlineMail, HiOutlineLockClosed, HiOutlineIdentification, HiOutlineUser } from 'react-icons/hi';
+import { HiOutlineMail, HiOutlineLockClosed, HiOutlineUser } from 'react-icons/hi';
 import { useAuth } from '../../contexts/AuthContext';
 import { Input } from '../../components/common/Input';
 import { Button } from '../../components/common/Button';
-import { Select } from '../../components/common/Select';
 import toast from 'react-hot-toast';
 
 export const SignupPage: React.FC = () => {
   const [form, setForm] = useState({
-    employeeId: '',
     email: '',
     password: '',
     confirmPassword: '',
     firstName: '',
     lastName: '',
-    role: 'EMPLOYEE',
   });
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -38,7 +35,6 @@ export const SignupPage: React.FC = () => {
 
   const validate = () => {
     const errs: Record<string, string> = {};
-    if (!form.employeeId) errs.employeeId = 'Employee ID is required';
     if (!form.firstName) errs.firstName = 'First name is required';
     if (!form.lastName) errs.lastName = 'Last name is required';
     if (!form.email) errs.email = 'Email is required';
@@ -66,10 +62,9 @@ export const SignupPage: React.FC = () => {
     setLoading(true);
     try {
       const result = await signup({
-        employeeId: form.employeeId,
         email: form.email,
         password: form.password,
-        role: form.role as 'EMPLOYEE' | 'ADMIN',
+        role: 'EMPLOYEE',
         firstName: form.firstName,
         lastName: form.lastName,
       });
@@ -123,15 +118,6 @@ export const SignupPage: React.FC = () => {
             </div>
 
             <Input
-              label="Employee ID"
-              placeholder="EMP-001"
-              value={form.employeeId}
-              onChange={handleChange('employeeId')}
-              error={errors.employeeId}
-              icon={<HiOutlineIdentification className="w-5 h-5" />}
-            />
-
-            <Input
               label="Email Address"
               type="email"
               placeholder="you@company.com"
@@ -139,16 +125,6 @@ export const SignupPage: React.FC = () => {
               onChange={handleChange('email')}
               error={errors.email}
               icon={<HiOutlineMail className="w-5 h-5" />}
-            />
-
-            <Select
-              label="Role"
-              value={form.role}
-              onChange={handleChange('role')}
-              options={[
-                { value: 'EMPLOYEE', label: 'Employee' },
-                { value: 'ADMIN', label: 'Admin' },
-              ]}
             />
 
             <div>
