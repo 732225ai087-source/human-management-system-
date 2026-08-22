@@ -8,6 +8,7 @@ import { Modal } from '../../components/common/Modal';
 import { PageLoader } from '../../components/common/LoadingSpinner';
 import { EmptyState } from '../../components/common/EmptyState';
 import toast from 'react-hot-toast';
+import { getEmployeeAvatar } from '../../utils/avatar';
 import type { ApiResponse, LeaveRequest, User } from '../../types/api';
 
 type LeaveWithUser = LeaveRequest & { user: User & { profile?: { firstName: string; lastName: string } } };
@@ -59,10 +60,17 @@ export const LeaveApprovals: React.FC = () => {
             {data.items.map((l) => (
               <div key={l.id} className="p-4 rounded-xl bg-surface-50 hover:bg-surface-100 transition-colors">
                 <div className="flex items-start justify-between">
-                  <div>
-                    <p className="font-medium text-surface-900">{l.user?.profile?.firstName} {l.user?.profile?.lastName} <span className="text-surface-400 text-sm">({l.user?.employeeId})</span></p>
-                    <p className="text-sm text-surface-600 mt-1">{l.leaveType} Leave — {new Date(l.startDate).toLocaleDateString()} to {new Date(l.endDate).toLocaleDateString()}</p>
-                    {l.reason && <p className="text-sm text-surface-500 mt-1">Reason: {l.reason}</p>}
+                  <div className="flex items-start gap-3">
+                    <img
+                      src={getEmployeeAvatar(l.user?.email, l.user?.profile?.profilePicUrl)}
+                      alt=""
+                      className="w-10 h-10 rounded-full object-cover ring-2 ring-primary-500/10 flex-shrink-0"
+                    />
+                    <div>
+                      <p className="font-medium text-surface-900">{l.user?.profile?.firstName} {l.user?.profile?.lastName} <span className="text-surface-400 text-sm">({l.user?.employeeId})</span></p>
+                      <p className="text-sm text-surface-600 mt-1">{l.leaveType} Leave — {new Date(l.startDate).toLocaleDateString()} to {new Date(l.endDate).toLocaleDateString()}</p>
+                      {l.reason && <p className="text-sm text-surface-500 mt-1">Reason: {l.reason}</p>}
+                    </div>
                   </div>
                   <div className="flex items-center gap-2">
                     <span className={`px-3 py-1 rounded-lg text-xs font-medium ${statusStyles[l.status]}`}>{l.status}</span>

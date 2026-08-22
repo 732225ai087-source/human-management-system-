@@ -22,14 +22,14 @@ export class LeaveController {
 
   async getLeaveById(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const leave = await leaveService.getLeaveById(req.params.id, req.user!.userId, req.user!.role);
+      const leave = await leaveService.getLeaveById(req.params.id as string, req.user!.userId, req.user!.role);
       res.json({ success: true, data: leave } as ApiResponse);
     } catch (error) { next(error); }
   }
 
   async approveLeave(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const leave = await leaveService.approveLeave(req.params.id, req.user!.userId, req.body.remarks);
+      const leave = await leaveService.approveLeave(req.params.id as string, req.user!.userId, req.body.remarks);
       await notificationService.createNotification(leave.userId, 'LEAVE_APPROVED', 'Leave Approved', `Your ${leave.leaveType} leave request has been approved.`);
       res.json({ success: true, data: leave, message: 'Leave approved' } as ApiResponse);
     } catch (error) { next(error); }
@@ -37,7 +37,7 @@ export class LeaveController {
 
   async rejectLeave(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const leave = await leaveService.rejectLeave(req.params.id, req.user!.userId, req.body.remarks);
+      const leave = await leaveService.rejectLeave(req.params.id as string, req.user!.userId, req.body.remarks);
       await notificationService.createNotification(leave.userId, 'LEAVE_REJECTED', 'Leave Rejected', `Your ${leave.leaveType} leave request has been rejected.${req.body.remarks ? ` Reason: ${req.body.remarks}` : ''}`);
       res.json({ success: true, data: leave, message: 'Leave rejected' } as ApiResponse);
     } catch (error) { next(error); }
