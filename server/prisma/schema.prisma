@@ -1,0 +1,172 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  EMPLOYEE
+  ADMIN
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  HALF_DAY
+  ON_LEAVE
+}
+
+enum LeaveType {
+  PAID
+  SICK
+  UNPAID
+}
+
+enum LeaveStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum NotificationType {
+  LEAVE_APPROVED
+  LEAVE_REJECTED
+  LEAVE_APPLIED
+  REMINDER
+  GENERAL
+}
+
+model User {
+  id               String   @id @default(uuid())
+  employeeId       String   @unique
+  email            String   @unique
+  password         String
+  role             Role     @default(EMPLOYEE)
+  isEmailVerified  Boolean  @default(false)
+  emailVerifyToken String?
+  refreshToken     String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  profile       Profile?
+  attendance    Attendance[]
+  leaveRequests LeaveRequest[]
+  payroll       Payroll[]
+  notifications Notification[]
+
+  @@map("users")
+}
+
+model Profile {
+  id            String     @id @default(uuid())
+  userId        String     @unique
+  firstName     String
+  lastName      String
+  phone         String?
+  address       String?
+  dateOfBirth   DateTime?
+  department    String?
+  designation   String?
+  dateOfJoining DateTime?
+  profilePicUrl String?
+  user          User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  documents     Document[]
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+
+  @@map("profiles")
+}
+
+model Document {
+  id         String   @id @default(uuid())
+  profileId  String
+  name       String
+  fileUrl    String
+  fileType   String
+  profile    Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  uploadedAt DateTime @default(now())
+
+  @@map("documents")
+}
+
+model Attendance {
+  id        String           @id @default(uuid())
+  userId    String
+  date      DateTime         @db.Date
+  checkIn   DateTime?
+  checkOut  DateTime?
+  status    AttendanceStatus @default(PRESENT)
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+
+  @@unique([userId, date])
+  @@map("attendance")
+}
+
+model LeaveRequest {
+  id           String      @id @default(uuid())
+  userId       String
+  leaveType    LeaveType
+  startDate    DateTime    @db.Date
+  endDate      DateTime    @db.Date
+  reason       String?
+  status       LeaveStatus @default(PENDING)
+  adminRemarks String?
+  reviewedBy   String?
+  reviewedAt   DateTime?
+  user         User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  @@map("leave_requests")
+}
+
+model Payroll {
+  id            String    @id @default(uuid())
+  userId        String
+  month         Int
+  year          Int
+  basicSalary   Float
+  hra           Float     @default(0)
+  allowances    Float     @default(0)
+  deductions    Float     @default(0)
+  netSalary     Float
+  paidOn        DateTime?
+  salarySlipUrl String?
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@unique([userId, month, year])
+  @@map("payroll")
+}
+
+model Notification {
+  id        String           @id @default(uuid())
+  userId    String
+  type      NotificationType
+  title     String
+  message   String
+  isRead    Boolean          @default(false)
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime         @default(now())
+
+  @@map("notifications")
+}
+
+model SalaryStructure {
+  id          String   @id @default(uuid())
+  userId      String   @unique
+  basicSalary Float
+  hra         Float    @default(0)
+  allowances  Float    @default(0)
+  deductions  Float    @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("salary_structures")
+}
