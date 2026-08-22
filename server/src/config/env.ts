@@ -29,4 +29,9 @@ export const config = {
   smtpUser: process.env.SMTP_USER || '',
   smtpPass: process.env.SMTP_PASS || '',
   emailFrom: process.env.EMAIL_FROM || 'noreply@dayflow.local',
+
+  // Default Admin User Setup
+  defaultAdminEmail: process.env.DEFAULT_ADMIN_EMAIL || 'admin@dayflow.local',
+  defaultAdminPassword: process.env.DEFAULT_ADMIN_PASSWORD || 'AdminPass123!',
+  defaultAdminEmpId: process.env.DEFAULT_ADMIN_EMP_ID || 'ADM-001',
 } as const;
